@@ -1,1 +1,4 @@
-
+lxml>=4.9.0
+numpy>=1.21.0
+mujoco>=2.3.0
+mujoco-viewer>=0.1.2
