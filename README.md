@@ -1,5 +1,5 @@
 # my_quadruped_project
-<img width="642" height="353" alt="image" src="https://github.com/user-attachments/assets/cbf3269d-30da-4120-8b6a-2e9cbbea3c4b" />
+<img width="631" height="363" alt="image" src="https://github.com/user-attachments/assets/5b6b45d8-3126-4581-aea2-ded61f437cb1" />
 
 # URDF-to-MJCF Assembler for Quadruped Leg Modules
 
