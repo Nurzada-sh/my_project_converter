@@ -17,13 +17,13 @@
 - Валидация структуры моделей
 
 ## Структура проекта
--quadruped-assembler/
--src/ 
--configs/ # Модели роботов
--outputs/ # MJCF
--requirements.txt # Зависимости
--LICENSE # MIT лицензия
--README.md # Документация
+- quadruped-assembler
+- src
+- configs  Модели роботов
+- outputs  MJCF
+- requirements.txt  Зависимости
+- LICENSE MIT лицензия
+- README.md Документация
 
 ## Технологии
 - Python 3.8+
