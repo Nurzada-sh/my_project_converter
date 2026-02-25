@@ -127,8 +127,8 @@ def check_equality(mjcf_file):
             b1 = conn.get('body1')
             b2 = conn.get('body2')
             print(f"   - {conn.get('name')}")
-            print(f"     body1: {b1} {'✅' if b1 in body_names else '❌'}")
-            print(f"     body2: {b2} {'✅' if b2 in body_names else '❌'}")
+            print(f"     body1: {b1} {'Good' if b1 in body_names else 'No'}")
+            print(f"     body2: {b2} {'Good' if b2 in body_names else 'No}")
 
 if __name__ == "__main__":
     
