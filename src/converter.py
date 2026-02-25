@@ -1,8 +1,8 @@
-
 import xml.etree.ElementTree as ET
 import math
 import sys
 import os
+import yaml
 
 def rpy_to_quat(rpy_str):
     try:
@@ -18,7 +18,7 @@ def rpy_to_quat(rpy_str):
     sr = math.sin(r * 0.5)
     
     w = cr * cp * cy + sr * sp * sy
-    x = sr * cp * cy - cr * sp * sy
+    x = sr * cp * cy - cr * sp *  sy
     y = cr * sp * cy + sr * cp * sy
     z = cr * cp * sy - sr * sp * cy
     
@@ -60,9 +60,125 @@ def extract_color(visual_element):
                 return color.get('rgba', '0.5 0.5 0.5 1')
     return "0.5 0.5 0.5 1"
 
+def add_equality_from_yaml(mujoco, worldbody, yaml_file):
+    
+    try:
+        with open(yaml_file, 'r', encoding='utf-8') as f:
+            config = yaml.safe_load(f)
+        
+        closed_loop = config.get('closed_loop', [])
+        types = config.get('type', [])
+        
+        if not closed_loop:
+            print("Нет closed_loop в YAML")
+            return
+        
+        mjcf_bodies = set()
+        for body in worldbody.findall('.//body'):
+            name = body.get('name')
+            if name:
+                mjcf_bodies.add(name)
+        
+        equality = ET.SubElement(mujoco, "equality")
+        connect_count = 0
+        
+        print(f"\n connect из {os.path.basename(yaml_file)}:")
+        for i, pair in enumerate(closed_loop):
+            if len(pair) == 2:
+                body1, body2 = pair[0], pair[1]
+                pair_type = types[i] if i < len(types) else '3d'
+                
+                if body1 in mjcf_bodies and body2 in mjcf_bodies:
+                    
+                    connect = ET.SubElement(equality, "connect")
+                    connect.set("name", f"connect_{body1}_to_{body2}")
+                    connect.set("body1", body1)
+                    connect.set("body2", body2)
+                    
+                    connect.set("anchor", "0 0 0")
+                    
+                    connect.set("solref", "0.01 1")
+                    
+                    connect_count += 1
+                    print(f" Есть  {body1} <-> {body2} (тип: {pair_type})")
+                else:
+                    print(f" Нет  {body1} или {body2} не найдены")
+        
+        if connect_count == 0:
+            mujoco.remove(equality)
+            print(" Нет валидных пар")
+        else:
+            print(f"Добавлено {connect_count} connect соединений")
+            
+    except Exception as e:
+        print(f" Ошибка: {e}")
+        
+def filter_motors_from_yaml(actuator, created_joints, yaml_file):
+   
+    try:
+        with open(yaml_file, 'r', encoding='utf-8') as f:
+            config = yaml.safe_load(f)
+        
+        allowed_motors = config.get('name_mot', [])
+        if not allowed_motors:
+            print(" Нет списка name_mot в YAML, создаем все моторы")
+            return True  # создаем все моторы
+        
+        print(f"\n Фильтрация моторов по YAML: {allowed_motors}")
+        
+        motors_created = 0
+        for joint_info in created_joints:
+            joint_name = joint_info['name']
+            joint_type = joint_info['type']
+            
+            should_create = False
+            for allowed in allowed_motors:
+                if allowed in joint_name:  
+                    should_create = True
+                    break
+            
+            if not should_create:
+                print(f" {joint_name} (нет в name_mot)")
+                continue
+            
+            if joint_type in ['revolute', 'continuous', 'prismatic']:
+                gear = "1"
+                
+                if 'ground' in joint_name.lower():
+                    gear = "80"
+                elif 'knee' in joint_name.lower():
+                    gear = "150"
+                elif 'hip' in joint_name.lower():
+                    gear = "120"
+                elif 'ankle' in joint_name.lower():
+                    gear = "100"
+                elif 'shoulder' in joint_name.lower():
+                    gear = "100"
+                elif 'elbow' in joint_name.lower():
+                    gear = "80"
+                
+                motor_attrib = {
+                    "name": f"{joint_name}_motor",
+                    "joint": joint_name,
+                    "gear": gear,
+                    "ctrlrange": "-1.0 1.0",
+                    "forcerange": "-20 20"
+                }
+                
+                ET.SubElement(actuator, "motor", motor_attrib)
+                motors_created += 1
+                print(f"Создан мотор для {joint_name}")
+        
+        print(f" {motors_created} моторов из {len(created_joints)} возможных")
+        return motors_created > 0
+        
+    except Exception as e:
+        print(f"Ошибка при фильтрации моторов: {e}")
+        return False
+
 def convert_urdf_to_mjcf(urdf_file, output_file=None):
     if output_file is None:
-        output_file = urdf_file.replace('.urdf', '_FIXED.mjcf')
+        output_file = urdf_file.replace('.urdf', '_ready.mjcf')
     
     tree = ET.parse(urdf_file)
     robot = tree.getroot()
@@ -78,9 +194,9 @@ def convert_urdf_to_mjcf(urdf_file, output_file=None):
     })
     
     ET.SubElement(mujoco, "option", {
-        "timestep": "0.01",
+        "timestep": "0.001",
         "gravity": "0 0 -9.81",
-        "integrator": "RK4"
+        "integrator": "implicitfast"
     })
     
     size = ET.SubElement(mujoco, "size")
@@ -92,9 +208,9 @@ def convert_urdf_to_mjcf(urdf_file, output_file=None):
     ET.SubElement(worldbody, "geom", {
         "name": "floor",
         "type": "plane",
-        "size": "10 10 0.1",
-        "pos": "0 0 0",
-        "rgba": "0.8 0.9 0.9 1"
+        "size": "2 2 0.1",
+        "pos": "0 0 -0.4",
+        "rgba": "2 0.2 0.9 1"
     })
     
     ET.SubElement(worldbody, "light", {
@@ -255,38 +371,60 @@ def convert_urdf_to_mjcf(urdf_file, output_file=None):
     
     actuator = ET.SubElement(mujoco, "actuator")
     
-    motors_created = 0
-    for joint_info in created_joints:
-        joint_name = joint_info['name']
-        joint_type = joint_info['type']
-        
-        if joint_type in ['revolute', 'continuous', 'prismatic']:
-            gear = "1"
-            
-            if 'ground' in joint_name.lower():
-                gear = "80"
-            elif 'knee' in joint_name.lower():
-                gear = "150"
-            elif 'hip' in joint_name.lower():
-                gear = "120"
-            elif 'ankle' in joint_name.lower():
-                gear = "100"
-            elif 'shoulder' in joint_name.lower():
-                gear = "100"
-            elif 'elbow' in joint_name.lower():
-                gear = "80"
-            
-            motor_attrib = {
-                "name": f"{joint_name}_motor",
-                "joint": joint_name,
-                "gear": gear,
-                "ctrlrange": "-1.0 1.0",
-                "forcerange": "-50 50"
-            }
-            
-            ET.SubElement(actuator, "motor", motor_attrib)
-            motors_created += 1
     
+    base_name = os.path.splitext(os.path.basename(urdf_file))[0]
+    yaml_file = os.path.join(os.path.dirname(urdf_file), "yaml_configs", f"{base_name}.yaml")
+    
+    if os.path.exists(yaml_file):
+        
+        filter_motors_from_yaml(actuator, created_joints, yaml_file)
+    else:
+        
+        print(f"\n YAML не найден")
+        motors_created = 0
+        for joint_info in created_joints:
+            joint_name = joint_info['name']
+            joint_type = joint_info['type']
+            
+            if joint_type in ['revolute', 'continuous', 'prismatic']:
+                gear = "1"
+                
+                if 'ground' in joint_name.lower():
+                    gear = "80"
+                elif 'knee' in joint_name.lower():
+                    gear = "150"
+                elif 'hip' in joint_name.lower():
+                    gear = "120"
+                elif 'ankle' in joint_name.lower():
+                    gear = "100"
+                elif 'shoulder' in joint_name.lower():
+                    gear = "100"
+                elif 'elbow' in joint_name.lower():
+                    gear = "80"
+                
+                motor_attrib = {
+                    "name": f"{joint_name}_motor",
+                    "joint": joint_name,
+                    "gear": gear,
+                    "ctrlrange": "-1.0 1.0",
+                    "forcerange": "-20 20"
+                }
+                
+                ET.SubElement(actuator, "motor", motor_attrib)
+                motors_created += 1
+        
+        print(f" {motors_created} моторов")
+    
+    base_name = os.path.splitext(os.path.basename(urdf_file))[0]
+    yaml_file = os.path.join(os.path.dirname(urdf_file), "yaml_configs", f"{base_name}.yaml")
+    
+    print(f"\n YAML: {yaml_file}")
+    if os.path.exists(yaml_file):
+        add_equality_from_yaml(mujoco, worldbody, yaml_file)
+    else:
+        print(f"YAML не найден: {yaml_file}")
+        
+        
     tree = ET.ElementTree(mujoco)
     ET.indent(tree, space='  ', level=0)
     
@@ -295,7 +433,7 @@ def convert_urdf_to_mjcf(urdf_file, output_file=None):
         tree.write(f, encoding='utf-8')
     
     check_result(output_file)
-    
+   
     return True
 
 def check_result(mjcf_file):
@@ -358,11 +496,15 @@ def validate_structure(mjcf_file):
 
 def main():
     if len(sys.argv) < 2:
-        print("Using: python3 converter_fixed.py <файл.urdf> [выходной_файл.mjcf]")
+        print("Using: python3 converter.py <file.urdf> [output_file.mjcf]")
         sys.exit(1)
     
     urdf_file = sys.argv[1]
-    output_file = sys.argv[2] if len(sys.argv) > 2 else None
+    
+    if len(sys.argv) > 2:
+        output_file = sys.argv[2]
+    else:
+        output_file = urdf_file.replace('.urdf', '_ready.mjcf')
     
     if not os.path.exists(urdf_file):
         print(f"File not found: {urdf_file}")
@@ -371,10 +513,13 @@ def main():
     success = convert_urdf_to_mjcf(urdf_file, output_file)
     
     if success:
-        output_path = output_file if output_file else urdf_file.replace('.urdf', '_FIXED.mjcf')
-        validate_structure(output_path)
+        print(f"Conversion successful! Output: {output_file}")
+        if os.path.exists(output_file):
+            validate_structure(output_file)
+        else:
+            print(f"ERROR: Output file {output_file} was not created!")
     else:
-        print("Conversion failed")
+        print("Conversion failed!")
         sys.exit(1)
 
 if __name__ == "__main__":
