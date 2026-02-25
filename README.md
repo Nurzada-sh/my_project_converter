@@ -22,11 +22,11 @@
 ## Структура проекта
 - quadruped-assembler
 - src
-- configs  Модели роботов
-- outputs  MJCF
-- requirements.txt  Зависимости
+- configs - модели роботов
+- outputs  MJCF - собранные модили ног с торсом
+- requirements.txt - ависимости
 - LICENSE MIT лицензия
-- README.md Документация
+- README.md - документация
 
 ## Технологии
 - Python 3.8+
