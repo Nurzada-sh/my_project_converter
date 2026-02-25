@@ -35,6 +35,6 @@
 
 ## Установка
 ```bash
-git clone https://github.com/Nurzada-sh/my_project_rp.git
+git clone https://github.com/Nurzada-sh/my_project_converter.git
 cd my_project_rp
 pip install -r requirements.txt
