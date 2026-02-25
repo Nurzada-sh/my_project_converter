@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mujoco model="robot_0">
+  <compiler angle="radian" inertiafromgeom="true" coordinate="local" />
+  <option timestep="0.001" gravity="0 0 -9.81" integrator="implicitfast" />
+  <size njmax="500" nconmax="100" />
+  <worldbody>
+    <geom name="floor" type="plane" size="2 2 0.1" pos="0 0 -0.4" rgba="2 0.2 0.9 1" />
+    <light name="light1" pos="0 0 3" dir="0 0 -1" directional="true" />
+    <body name="robot_root" pos="0 0 0.5" quat="1 0 0 0">
+      <body name="G">
+        <geom name="G_vis0" type="box" rgba="0.1568627450980392 0.42745098039215684 0.8 1.0" contype="1" conaffinity="1" pos="0.0 0.0 0.0" quat="1.0 0.0 0.0 0.0" size="0.0335 0.0335 0.0335" />
+        <inertial pos="0.0 0.0 0.0" mass="0.04903493747122909" diaginertia="3.66863057180579e-05 3.66863057180579e-05 3.66863057180579e-05" />
+        <body name="L6" pos="0.0 0.0 0.0" quat="0.09853761796664233 5.490065323952282e-17 0.9951333266680702 5.490065323952282e-17">
+          <joint name="Main_ground" type="hinge" axis="0 1 0" range="-3.141592653589793 3.141592653589793" damping="0.1" />
+          <geom name="L6_vis0" type="box" rgba="0.37254901960784315 0.5019607843137255 0.8352941176470589 1.0" contype="1" conaffinity="1" pos="0.0 0.0 0.07649" quat="1.0 0.0 0.0 0.0" size="0.01675 0.01675 0.059735292703891774" />
+          <inertial pos="0.0 0.0 0.07649" mass="0.09693685001461892" diaginertia="0.0001243657034733558 0.0001243657034733558 1.8131229988151018e-05" />
+          <body name="L5" pos="3.9850810789398094e-17 0.0 0.15297058540778355" quat="0.9874789974914651 0.0 0.15775052935965425 0.0">
+            <joint name="Main_knee" type="hinge" axis="0 1 0" range="-3.141592653589793 3.141592653589793" damping="0.1" />
+            <geom name="L5_vis0" type="box" rgba="0.5176470588235295 0.5843137254901961 0.8705882352941177 1.0" contype="1" conaffinity="1" pos="3.122502256758253e-17 0.0 0.1258967831201417" quat="1.0 0.0 0.0 0.0" size="0.016750000417232513 0.016750000417232513 0.10914678270290917" />
+            <geom name="L5_vis1" type="box" rgba="0.5176470588235295 0.5843137254901961 0.8705882352941177 1.0" contype="1" conaffinity="1" pos="1.3877787807814457e-17 0.0 0.04406387409204959" quat="1.0 0.0 0.0 0.0" size="0.016750000417232513 0.016750000417232513 0.02731387367481708" />
+            <geom name="L5_vis2" type="box" rgba="0.5176470588235295 0.5843137254901961 0.8705882352941177 1.0" contype="1" conaffinity="1" pos="3.8163916471489756e-17 0.0 0.16996065721219128" quat="1.0 0.0 0.0 0.0" size="0.016750000417232513 0.016750000417232513 0.06508290861085958" />
+            <inertial pos="0.0 0.0 0.11331" mass="0.20430196607254722" diaginertia="0.0318890529501516 0.03195007230862345 9.923234039844751e-05" />
+            <body name="EE" pos="5.551115123125783e-17 0.0 0.2517935662402834" quat="0.05967898086042496 5.74689170874561e-17 0.9982176211846098 5.74689170874561e-17">
+              <geom name="EE_vis0" type="sphere" rgba="0.6431372549019608 0.6666666666666666 0.9058823529411765 1.0" contype="1" conaffinity="1" pos="0.0 0.0 0.0" quat="1.0 0.0 0.0 0.0" size="0.002142857142857143" />
+              <inertial pos="0.0 0.0 0.0" mass="2.979933439782622e-05" diaginertia="5.473347134294612e-11 5.473347134294612e-11 5.473347134294612e-11" />
+            </body>
+            <body name="Main_ee_L5Unit" pos="5.551115123125783e-17 0.0 0.2517935662402834" quat="0.04219941206070872 0.04219941206070862 0.705846449039542 -0.7058464490395416">
+              <geom name="Main_ee_L5Unit_vis0" type="cylinder" rgba="0.5176470588235295 0.5843137254901961 0.8705882352941177 0.9" contype="1" conaffinity="1" size="0.016 0.015" />
+              <inertial pos="0 0 0" mass="0.1" diaginertia="0.00065 0.00065 0.0008" />
+            </body>
+            <body name="Main_connection_2_L5Pseudo" pos="5.551115123125783e-17 0.0 0.08812774818409916" quat="0.7309513322872746 0.0 -0.6824295933116165 0.0">
+              <geom name="Main_connection_2_L5Pseudo_vis0" type="sphere" rgba="0.5176470588235295 0.5843137254901961 0.8705882352941177 0.5" contype="1" conaffinity="1" size="0.02392857202461788" />
+              <inertial pos="0 0 0" mass="0.05" diaginertia="1.145153118274651e-05 1.145153118274651e-05 1.145153118274651e-05" />
+            </body>
+          </body>
+          <body name="Main_knee_L6Unit" pos="3.9850810789398094e-17 0.0 0.15297058540778355" quat="0.6982530954055087 0.6982530954055086 0.11154646904597909 -0.11154646904597906">
+            <geom name="Main_knee_L6Unit_vis0" type="cylinder" rgba="0.37254901960784315 0.5019607843137255 0.8352941176470589 0.9" contype="1" conaffinity="1" size="0.016 0.015" />
+            <inertial pos="0 0 0" mass="0.1" diaginertia="0.00065 0.00065 0.0008" />
+          </body>
+        </body>
+        <body name="Main_ground_GActuator" pos="0.0 0.036750000000000005 0.0" quat="0.0696766178661822 0.06967661786618214 0.7036655234717202 -0.7036655234717203">
+          <geom name="Main_ground_GActuator_vis0" type="cylinder" rgba="0.1568627450980392 0.42745098039215684 0.8 0.9" contype="1" conaffinity="1" size="0.048 0.02" />
+          <inertial pos="0 0 0" mass="0.44" diaginertia="0.0067466666666666664 0.0067466666666666664 0.01056" />
+        </body>
+        <body name="Main_ground_GUnit" pos="0.0 0.0 0.0" quat="0.0696766178661822 0.06967661786618214 0.7036655234717202 -0.7036655234717203">
+          <geom name="Main_ground_GUnit_vis0" type="cylinder" rgba="0.1568627450980392 0.42745098039215684 0.8 0.9" contype="1" conaffinity="1" size="0.01675 0.01675" />
+          <inertial pos="0 0 0" mass="0.1" diaginertia="0.0006979166666666668 0.0006979166666666668 0.0008375000000000001" />
+        </body>
+        <body name="L3" pos="-0.15 0.0 -0.01" quat="0.06213744155632902 5.73091937666162e-17 0.9980676020975903 5.73091937666162e-17">
+          <joint name="Ground_connection" type="hinge" axis="0 1 0" range="-3.141592653589793 3.141592653589793" damping="0.1" />
+          <geom name="L3_vis0" type="box" rgba="0.01568627450980392 0.5058823529411764 0.29411764705882354 1.0" contype="1" conaffinity="1" pos="0.0 0.0 0.10078" quat="1.0 0.0 0.0 0.0" size="0.01675 0.01675 0.08402822185373188" />
+          <inertial pos="0.0 0.0 0.10078" mass="0.136358771676357" diaginertia="0.0003336837577936235 0.0003336837577936235 2.5504771918965276e-05" />
+          <body name="L4" pos="8.326672684688674e-17 0.0 0.20155644370746378" quat="0.8085047933142612 0.0 -0.5884895914014655 0.0">
+            <joint name="branch_1" type="hinge" axis="0 1 0" range="-3.141592653589793 3.141592653589793" damping="0.1" />
+            <geom name="L4_vis0" type="box" rgba="0.0 0.6627450980392157 0.3607843137254902 1.0" contype="1" conaffinity="1" pos="-0.0 0.0 0.07355" quat="1.0 0.0 0.0 0.0" size="0.01675 0.01675 0.056796753837270064" />
+            <inertial pos="-0.0 0.0 0.07355" mass="0.09216826701314518" diaginertia="0.0001077273072689468 0.0001077273072689468 1.723930627591703e-05" />
+            <body name="Main_connection_2_L4Pseudo" pos="-2.7755575615628914e-17 0.0 0.14709350767454013" quat="1.0 0.0 0.0 0.0">
+              <joint name="Main_connection_2_L4_revolute" type="hinge" axis="0 1 0" range="-3.141592653589793 3.141592653589793" damping="0.1" />
+              <geom name="Main_connection_2_L4Pseudo_vis0" type="sphere" rgba="0.0 0.6627450980392157 0.3607843137254902 0.5" contype="1" conaffinity="1" size="0.02392857142857143" />
+              <inertial pos="0 0 0" mass="0.05" diaginertia="1.1451530612244902e-05 1.1451530612244902e-05 1.1451530612244902e-05" />
+            </body>
+          </body>
+          <body name="branch_1_L3Unit" pos="8.326672684688674e-17 0.0 0.20155644370746378" quat="0.5716992219743421 0.571699221974342 -0.4161249807376769 0.4161249807376769">
+            <geom name="branch_1_L3Unit_vis0" type="cylinder" rgba="0.01568627450980392 0.5058823529411764 0.29411764705882354 0.9" contype="1" conaffinity="1" size="0.016 0.015" />
+            <inertial pos="0 0 0" mass="0.1" diaginertia="0.00065 0.00065 0.0008" />
+          </body>
+        </body>
+        <body name="Ground_connection_GActuator" pos="-0.15 0.036750000000000005 -0.01" quat="0.04393780629006307 0.04393780629006299 0.7057403695258029 -0.705740369525803">
+          <geom name="Ground_connection_GActuator_vis0" type="cylinder" rgba="0.1568627450980392 0.42745098039215684 0.8 0.9" contype="1" conaffinity="1" size="0.048 0.02" />
+          <inertial pos="0 0 0" mass="0.44" diaginertia="0.0067466666666666664 0.0067466666666666664 0.01056" />
+        </body>
+        <body name="Ground_connection_GUnit" pos="-0.15 0.0 -0.01" quat="0.04393780629006307 0.04393780629006299 0.7057403695258029 -0.705740369525803">
+          <geom name="Ground_connection_GUnit_vis0" type="cylinder" rgba="0.1568627450980392 0.42745098039215684 0.8 0.9" contype="1" conaffinity="1" size="0.01675 0.01675" />
+          <inertial pos="0 0 0" mass="0.1" diaginertia="0.0006979166666666668 0.0006979166666666668 0.0008375000000000001" />
+        </body>
+      </body>
+    </body>
+  </worldbody>
+  <actuator>
+    <motor name="Main_ground_motor" joint="Main_ground" gear="80" ctrlrange="-1.0 1.0" forcerange="-20 20" />
+    <motor name="Ground_connection_motor" joint="Ground_connection" gear="80" ctrlrange="-1.0 1.0" forcerange="-20 20" />
+  </actuator>
+  <equality>
+    <connect name="connect_Main_connection_2_L4Pseudo_to_Main_connection_2_L5Pseudo" body1="Main_connection_2_L4Pseudo" body2="Main_connection_2_L5Pseudo" anchor="0 0 0" solref="0.01 1" />
+  </equality>
+</mujoco>
