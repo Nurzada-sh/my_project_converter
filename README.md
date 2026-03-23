@@ -38,7 +38,7 @@
 python3 converter.py <путь_к_urdf_файлу>
 2. Сборка квадрупеда:
 python3 assembler.py
-3. Тестирование модели6
+3. Тестирование модели:
 python3 test.py <путь_к_mjcf_файлу>
 4. Тестируем собранного квадрупеда:
 python3 test.py ../outputs/quadruped_assembled.mjcf
