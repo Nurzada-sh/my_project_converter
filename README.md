@@ -34,13 +34,13 @@
 - MuJoCo (mjpro 2.3+)
   
 ## Иструкция
-1. Конвертация URFD to MJCF
+1. Конвертация URFD to MJCF:
 python3 converter.py <путь_к_urdf_файлу>
-2. Сборка квадрупеда
+2. Сборка квадрупеда:
 python3 assembler.py
-3. Тестирование модели
+3. Тестирование модели6
 python3 test.py <путь_к_mjcf_файлу>
-4. Тестируем собранного квадрупеда
+4. Тестируем собранного квадрупеда:
 python3 test.py ../outputs/quadruped_assembled.mjcf
 
 ## Установка
