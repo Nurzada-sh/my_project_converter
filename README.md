@@ -32,9 +32,22 @@
 - Python 3.8+
 - xml.etree.ElementTree
 - MuJoCo (mjpro 2.3+)
+  
+## Иструкция
+1. Конвертация URFD to MJCF
+python3 converter.py <путь_к_urdf_файлу>
+2. Сборка квадрупеда
+python3 assembler.py
+3. Тестирование модели
+python3 test.py <путь_к_mjcf_файлу>
+4. Тестируем собранного квадрупеда
+python3 test.py ../outputs/quadruped_assembled.mjcf
 
 ## Установка
 ```bash
 git clone https://github.com/Nurzada-sh/my_project_converter.git
 cd my_project_converter
 pip install -r requirements.txt
+
+
+
